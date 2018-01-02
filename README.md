@@ -1,2 +1,2 @@
-# packagegb
+# pgb
 
