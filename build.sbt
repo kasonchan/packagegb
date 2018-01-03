@@ -2,7 +2,7 @@ val name = "pgb"
 
 lazy val buildSettings = Seq(
   organization := "com.kasonchan",
-  version := "0.0.1",
+  version := "0.0.1-SNAPSHOT",
   scalaVersion := "2.12.4"
 )
 
@@ -28,13 +28,7 @@ val baseSettings = Seq(
   sbtPlugin := true
 )
 
-lazy val noPublishSettings = Seq(
-  publish := {},
-  publishLocal := {},
-  publishArtifact := true
-)
-
-lazy val allSettings = baseSettings ++ buildSettings ++ noPublishSettings
+lazy val allSettings = baseSettings ++ buildSettings
 
 lazy val pgb = (project in file("."))
   .settings(

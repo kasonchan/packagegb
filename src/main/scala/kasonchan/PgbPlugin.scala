@@ -1,8 +1,6 @@
 package kasonchan
 
-import sbt.{Def, _}
-
-import scala.util.Try
+import sbt.{AutoPlugin, Def, taskKey}
 
 /**
   * @author kasonchan
@@ -12,15 +10,15 @@ object PgbPlugin extends AutoPlugin {
 
   import autoImport._
 
-  override lazy val projectSettings = Seq(
-    dlgb
-  )
-
   object autoImport {
-    val dlgb = taskKey[Try[Int]]("Download Gatling Bundle")
+    val dlgb = taskKey[Unit]("Download Gatling Bundle")
   }
 
-  lazy val dlgbTask: Def.Initialize[Task[Try[Int]]] =
+  override lazy val projectSettings = Seq(
+    dlgb := dlgbTask.value
+  )
+
+  lazy val dlgbTask =
     Def.task {
       Pgb.dlgb
     }
