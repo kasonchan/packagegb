@@ -1,4 +1,4 @@
-package kasonchan
+package pgb
 
 import scala.sys.process._
 import scala.util.Try
@@ -14,10 +14,10 @@ object Pgb {
   /**
     * Set up download Gatling bundle
     */
-  def dlgb: Try[Int] = Try {
+  def dlgb(version: String): Try[Int] = Try {
     lazy val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
-      s"$gatlingVersion/gatling-charts-highcharts-bundle-$gatlingVersion-bundle.zip"
-    s"curl -O $link".!
+      s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
+    s"curl -fO $link".!
   }
 
 }
