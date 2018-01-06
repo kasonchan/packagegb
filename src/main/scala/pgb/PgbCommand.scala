@@ -11,7 +11,7 @@ import scala.util.{Failure, Success}
   */
 object PgbCommand {
 
-  def dl = Command.args("dlgb", "<version>") { (state, args) =>
+  def dl: Command = Command.args("dlgb", "<version>") { (state, args) =>
     val response = args match {
       case Seq()   => dlgb(gatlingVersion)
       case version => dlgb(version.mkString(""))

@@ -9,7 +9,6 @@ lazy val buildSettings = Seq(
 lazy val compilerOptions = Seq(
   "-encoding",
   "UTF-8",
-  "-target:jvm-1.8",
   "-deprecation",
   "-feature",
   "-unchecked",
@@ -22,9 +21,13 @@ val testDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.4"
 )
 
+lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
+
 val baseSettings = Seq(
   libraryDependencies ++= testDependencies.map(_ % "test"),
   scalacOptions in(Compile, console) := compilerOptions,
+  compileScalastyle := scalastyle.in(Compile).toTask("").value,
+  (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value,
   sbtPlugin := true
 )
 
