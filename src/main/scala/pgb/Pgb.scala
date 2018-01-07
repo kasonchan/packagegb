@@ -14,7 +14,7 @@ object Pgb {
   /**
     * Set up download Gatling bundle
     */
-  def dlgb(version: String): Try[Int] = Try {
+  def dlgb(version: String = gatlingVersion): Try[Int] = Try {
     lazy val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
       s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
     s"curl -fO $link".!

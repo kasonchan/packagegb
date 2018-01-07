@@ -1,6 +1,6 @@
 package pgb
 
-import pgb.Pgb.{dlgb, gatlingVersion}
+import pgb.Pgb.dlgb
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -13,7 +13,7 @@ object PgbCommand {
 
   def dl: Command = Command.args("dlgb", "<version>") { (state, args) =>
     val response = args match {
-      case Seq()   => dlgb(gatlingVersion)
+      case Seq()   => dlgb()
       case version => dlgb(version.mkString(""))
     }
 
