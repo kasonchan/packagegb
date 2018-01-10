@@ -11,18 +11,15 @@ import scala.util.{Failure, Success}
   * @author kasonchan
   * @since Jan-2018
   */
-class PgbIntegrationTestSuite
+class PgbTestSuite
     extends Specification
     with specification.dsl.GWT
     with StandardDelimitedStepParsers {
   def is: SpecStructure = s2"""
 
- Given I enabled plugin PgbPlugin
-   When I enter sbt dlgb
-   Then I get the zip file and exit code {0} $dlgbSucceed
+ When I call dlgb(), I get a zip file and exit code {0} $dlgbSucceed
 
-   When I type sbt dlgb invalid-version
-   Then I get exit code status {22} $dlgbFailed
+ When I call dlgb(invalid-version), I get exit code status {22} $dlgbFailed
 
   """
 
