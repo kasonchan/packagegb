@@ -31,7 +31,7 @@ class PgbIntegrationTestSuite
   }
 
   def dlgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
-    val exitCode: Int = Process(List("sbt", "\"dlgb invalid-version\"")).!
+    val exitCode: Int = Process(List("sbt \"dlgb invalid-version\"")).!
 
     exitCode must_== expectedExitCode
   }
