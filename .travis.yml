@@ -5,11 +5,11 @@ scala:
 
 script:
   - cd TRAVIS_BUILD_DIR/pgb && \ 
-    sbt ++$TRAVIS_SCALA_VERSION clean coverage test \
-    sbt ++$TRAVIS_SCALA_VERSION coverageReport \
-    sbt ++$TRAVIS_SCALA_VERSION coverageAggregate \
+    sbt ++$TRAVIS_SCALA_VERSION clean coverage test && \
+    sbt ++$TRAVIS_SCALA_VERSION coverageReport && \
+    sbt ++$TRAVIS_SCALA_VERSION coverageAggregate && \
     sbt publishLocal
-  - cd TRAVIS_BUILD_DIR/pgb-it \
+  - cd TRAVIS_BUILD_DIR/pgb-it && \
     sbt ++$TRAVIS_SCALA_VERSION clean test
 
 sudo: false
