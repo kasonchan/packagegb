@@ -16,8 +16,8 @@ class PgbIntegrationTestSuite
   def is: SpecStructure = s2"""
 
  Given I enabled plugin PgbPlugin
-//   When I enter sbt dlgb
-//   Then I get the zip file and exit code {0} $dlgbSucceed
+   When I enter sbt dlgb
+   Then I get the zip file and exit code {0} $dlgbSucceed
 
    When I type sbt dlgb invalid-version
    Then I get exit code status {22} $dlgbFailed
@@ -31,7 +31,7 @@ class PgbIntegrationTestSuite
   }
 
   def dlgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
-    val exitCode: Int = Process("""sbt "dlgb invalid-version"""").!
+    val exitCode: Int = Process(List("sbt", "\"dlgb invalid-version\"")).!
 
     exitCode must_== expectedExitCode
   }
