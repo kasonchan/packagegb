@@ -19,8 +19,8 @@ class PgbIntegrationTestSuite
    When I enter sbt dlgb
    Then I get the zip file and exit code {0} $dlgbSucceed
 
-   When I type sbt dlgb invalid-version
-   Then I get exit code status {22} $dlgbFailed
+   When I type sbt dlgb invalidVersion
+   Then I get exit code status {0} but no zip file $dlgbFailed
 
   """
 
@@ -31,7 +31,7 @@ class PgbIntegrationTestSuite
   }
 
   def dlgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
-    val exitCode: Int = Process(List("sbt \"dlgb invalid-version\"")).!
+    val exitCode: Int = Process(List("sbt", "dlgb invalidVersion")).!
 
     exitCode must_== expectedExitCode
   }
