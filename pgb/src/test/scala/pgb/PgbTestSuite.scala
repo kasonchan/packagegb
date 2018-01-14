@@ -3,7 +3,7 @@ package pgb
 import org.specs2._
 import org.specs2.specification.core.{Fragments, SpecStructure}
 import org.specs2.specification.script.StandardDelimitedStepParsers
-import pgb.Pgb.dlgb
+import pgb.Pgb.{dlgb, unzipgb, mvgb}
 
 import scala.util.{Failure, Success}
 
@@ -19,7 +19,11 @@ class PgbTestSuite
 
  When I call dlgb(), I get a zip file and exit code {0} $dlgbSucceed
 
- When I call dlgb(invalid-version), I get exit code status {22} $dlgbFailed
+ When I call dlgb(invalidVersion), I get exit code status {22} $dlgbFailed
+
+ When I call unzipgb(), I get a zip file and exit code {0} $unzipgbSucceed
+
+ When I call unzipgb(invalidVersion), I get exit code status {1} $unzipgbFailed
 
   """
 
@@ -33,7 +37,25 @@ class PgbTestSuite
   }
 
   def dlgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
-    val exitCode = dlgb("invalid-version") match {
+    val exitCode = dlgb("invalidVersion") match {
+      case Success(s) => s
+      case Failure(e) => e
+    }
+
+    exitCode must_== expectedExitCode
+  }
+
+  def unzipgbSucceed: String => Fragments = example(anInt) { expectedExitCode =>
+    val exitCode = unzipgb() match {
+      case Success(s) => s
+      case Failure(e) => e
+    }
+
+    exitCode must_== expectedExitCode
+  }
+
+  def unzipgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
+    val exitCode = unzipgb("invalidVersion") match {
       case Success(s) => s
       case Failure(e) => e
     }

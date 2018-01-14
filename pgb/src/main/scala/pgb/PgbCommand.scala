@@ -1,6 +1,6 @@
 package pgb
 
-import pgb.Pgb.dlgb
+import pgb.Pgb.{dlgb, unzipgb}
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -25,6 +25,23 @@ object PgbCommand {
         }
       case Failure(e) => state.log.error("Fail")
     }
+    state
+  }
+
+  def unpack: Command = Command.args("unpack", "<version>") { (state, args) =>
+    val unzipResponse = args match {
+      case Seq() => unzipgb()
+      case version => unzipgb(version.mkString(""))
+    }
+
+    unzipResponse match {
+      case Success(s) =>
+        s match {
+          case 0 => state.log.info("Unzip gatling bundle successfully")
+          case _ => state.log.error("Failed unzipping gatling bundle")
+        }
+    }
+
     state
   }
 
