@@ -40,6 +40,7 @@ object PgbCommand {
           case 0 => state.log.info("Unzip gatling bundle successfully")
           case _ => state.log.error("Failed unzipping gatling bundle")
         }
+      case Failure(e) => state.log.error("Failed unzipping gatling bundle")
     }
 
     state

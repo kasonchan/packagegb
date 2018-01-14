@@ -3,7 +3,7 @@ package pgb
 import org.specs2._
 import org.specs2.specification.core.{Fragments, SpecStructure}
 import org.specs2.specification.script.StandardDelimitedStepParsers
-import pgb.Pgb.{dlgb, unzipgb, mvgb}
+import pgb.Pgb.{dlgb, unzipgb}
 
 import scala.util.{Failure, Success}
 
