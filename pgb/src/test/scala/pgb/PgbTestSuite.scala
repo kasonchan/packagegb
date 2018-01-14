@@ -16,7 +16,7 @@ class PgbTestSuite
     extends Specification
     with specification.dsl.GWT
     with StandardDelimitedStepParsers {
-  def is: SpecStructure = s2"""
+  def is: SpecStructure = sequential ^ s2"""
 
  When I call dlgb(), I get a zip file and exit code {0} $dlgbSucceed
 
@@ -35,6 +35,9 @@ class PgbTestSuite
     }
 
     exitCode must_== expectedExitCode
+
+    val removedFile: Int = Process(Seq("/bin/sh", "-c", "rm -r gatling-charts-highcharts-bundle-*")).!
+    removedFile must_== expectedExitCode
   }
 
   def dlgbFailed: String => Fragments = example(anInt) { expectedExitCode =>
@@ -56,7 +59,7 @@ class PgbTestSuite
 
     exitCode must_== expectedExitCode
 
-    val removedFile: Int = Process(Seq("/bin/sh", "-c", "rm gatling-charts-highcharts-bundle-*")).!
+    val removedFile: Int = Process(Seq("/bin/sh", "-c", "rm -r gatling-charts-highcharts-bundle-*")).!
     removedFile must_== expectedExitCode
   }
 
