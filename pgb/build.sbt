@@ -29,7 +29,8 @@ val baseSettings = Seq(
   libraryDependencies ++= testDependencies,
   scalacOptions in(Compile, console) := compilerOptions,
   compileScalastyle := scalastyle.in(Compile).toTask("").value,
-  (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value
+  (compile in Compile) := ((compile in Compile) dependsOn compileScalastyle).value,
+  parallelExecution in ThisBuild := false
 )
 
 lazy val allSettings = baseSettings ++ buildSettings
