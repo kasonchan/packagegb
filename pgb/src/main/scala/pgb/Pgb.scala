@@ -32,12 +32,12 @@ object Pgb {
   }
 
   /**
-    * Move unzipped Gatling bundle to current directory.
+    * Copy unzipped Gatling bundle to current directory.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def mvgb: Try[Int] = {
+  private def cpgb(version: String = gatlingVersion): Try[Int] = {
     lazy val moveExitCode = Try {
-      Seq("/bin/sh", "-c", "mv -fv gatling-charts-highcharts-bundle-2.3.0/* .").!
+      Seq("/bin/sh", "-c", s"cp -fv gatling-charts-highcharts-$version/* .").!
     }
 
     lazy val removeExitCode = Try {
