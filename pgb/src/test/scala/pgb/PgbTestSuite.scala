@@ -22,9 +22,9 @@ class PgbTestSuite
 
   When I call downloadGB(invalidVersion), I get exit code status {22} $downloadGBFailed
 
-  When I call unpackGB(), I get unzipped files and exit code {6} $unpackGBSucceeded
+  When I call unpackGB(), I get unzipped files and exit code {0} $unpackGBSucceeded
 
-  When I call unpackGB(invalidVersion), I get exit code status {15} $unpackGBFailed
+  When I call unpackGB(invalidVersion), I get exit code status {9} $unpackGBFailed
 
   """
 
