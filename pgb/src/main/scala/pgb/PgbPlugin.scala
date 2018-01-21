@@ -11,6 +11,7 @@ object PgbPlugin extends AutoPlugin {
   override lazy val projectSettings = Seq(
     Keys.commands ++= Seq(PgbCommand.download,
                           PgbCommand.unpack,
+                          PgbCommand.pack,
                           PgbCommand.cleanup)
   )
 
