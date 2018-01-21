@@ -16,10 +16,28 @@ object Pgb {
     * @param version User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def dlgb(version: String = gatlingVersion): Try[Int] = Try {
+  def downloadGB(version: String = gatlingVersion): Try[Int] = Try {
     lazy val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
       s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
     s"curl -fO $link".!
+  }
+
+  /**
+    * Execute unzip gatling bundle files and directories to your project.
+    * Copy the gatling bundle files and directories to corresponding directories
+    * of your project.
+    * Clean unzipped gatling bundle files and directories.
+    * @param version User specified version.
+    * @return Try(0) if process is executed successfully. Otherwise return
+    *         Try(nonzero).
+    */
+  def unpackGB(version: String = gatlingVersion): Try[Int] = {
+    for {
+      unzipGBResponse <- unzipGB(version)
+      cpGBResponse <- cpGB(version)
+      cpSimsResponse <- cpSims
+      cleanGBResponse <- cleanGB
+    } yield unzipGBResponse + cpGBResponse + cpSimsResponse + cleanGBResponse
   }
 
   /**
@@ -27,7 +45,7 @@ object Pgb {
     * @param version User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def unzipgb(version: String = gatlingVersion): Try[Int] = Try {
+  private def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
     s"unzip gatling-charts-highcharts-bundle-$version-bundle.zip".!
   }
 
@@ -35,7 +53,7 @@ object Pgb {
     * Copy unzipped Gatling bundle to current directory.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cpgb(version: String = gatlingVersion): Try[Int] = {
+  private def cpGB(version: String = gatlingVersion): Try[Int] = {
     lazy val moveExitCode = Try {
       Seq("/bin/sh", "-c", s"cp -fv gatling-charts-highcharts-$version/* .").!
     }
@@ -51,7 +69,7 @@ object Pgb {
   }
 
   /**
-    * Copy simulation files and directories to the corresponding direcotories.
+    * Copy simulation files and directories to the corresponding directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   private def cpSims: Try[Int] = {
@@ -60,7 +78,9 @@ object Pgb {
     }
 
     lazy val resourcesExitCode = Try {
-      Seq("/bin/sh", "-c", "cp -frv src/test/resources/bodies/* user-files/bodies").!
+      Seq("/bin/sh",
+          "-c",
+          "cp -frv src/test/resources/bodies/* user-files/bodies").!
     }
 
     lazy val scalaExitCode = Try {
@@ -78,14 +98,14 @@ object Pgb {
     * Remove all Gatling bundle files and directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cleanupGB: Try[Int] = {
+  private def cleanGB: Try[Int] = {
     val gbDirectories = List("bin",
-      "conf",
-      "lib",
-      "results",
-      "user-files",
-      "LICENSE",
-      "gatling-charts-highcharts-bundle-*")
+                             "conf",
+                             "lib",
+                             "results",
+                             "user-files",
+                             "LICENSE",
+                             "gatling-charts-highcharts-bundle-*")
 
     Try {
       Seq("/bin/sh", "-c", s"rm -rv ${gbDirectories.mkString(" ")}").!
@@ -96,7 +116,7 @@ object Pgb {
     * Remove all build file and Gatling bundle files and directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cleanupBuild: Try[Int] = {
+  private def cleanBuild: Try[Int] = {
     lazy val rmBuild = Try {
       s"rm -rv ../${new java.io.File(".").getCanonicalFile.getName}.zip".!
     }

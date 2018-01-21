@@ -1,6 +1,6 @@
 package pgb
 
-import pgb.Pgb.{dlgb, unzipgb, cpgb}
+import pgb.Pgb.{downloadGB, unpackGB}
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -11,68 +11,37 @@ import scala.util.{Failure, Success}
   */
 object PgbCommand {
 
-  def dl: Command = Command.args("dlgb", "<version>") { (state, args) =>
-    val response = args match {
-      case Seq()   => dlgb()
-      case version => dlgb(version.mkString(""))
-    }
+  def download: Command = Command.args("download", "<version>") {
+    (state, args) =>
+      val response = args match {
+        case Seq()   => downloadGB()
+        case version => downloadGB(version.mkString(""))
+      }
 
-    response match {
-      case Success(s) =>
-        s match {
-          case 0 => state.log.info("Success")
-          case _ => state.log.error("Fail")
-        }
-      case Failure(e) => state.log.error("Fail")
-    }
-    state
+      response match {
+        case Success(s) =>
+          s match {
+            case 0 => state.log.info(s"Downloaded gatling bundle successfully.")
+            case _ => state.log.error(s"Failed downloading gatling bundle.")
+          }
+        case Failure(e) => state.log.error("Failed downloading gatling bundle.")
+      }
+      state
   }
 
   def unpack: Command = Command.args("unpack", "<version>") { (state, args) =>
     val unzipResponse = args match {
-      case Seq() => unzipgb()
-      case version => unzipgb(version.mkString(""))
+      case Seq()   => unpackGB()
+      case version => unpackGB(version.mkString(""))
     }
 
     unzipResponse match {
       case Success(s) =>
         s match {
-          case 0 => state.log.info("Unzip gatling bundle successfully")
-          case _ => state.log.error("Failed unzipping gatling bundle")
+          case 0 => state.log.info("Unpacked gatling bundle successfully.")
+          case _ => state.log.error("Failed unpacking gatling bundle.")
         }
-      case Failure(e) => state.log.error("Failed unzipping gatling bundle")
-    }
-
-    val cpResponse = args match {
-      case Seq() => cpgb()
-      case version => cpgb(version.mkString(""))
-    }
-
-    cpResponse match {
-      case Success(s) =>
-        s match {
-          case 0 => state.log.info("Copy gatling bundle successfully")
-          case _ => state.log.error("Failed copying gatling bundle")
-        }
-      case Failure(e) => state.log.error("Failed copying gatling bundle")
-    }
-
-    state
-  }
-
-  def pack: Command = Command.args("pack", "<version>") { (state, args) =>
-    val unzipResponse = args match {
-      case Seq() => unzipgb()
-      case version => unzipgb(version.mkString(""))
-    }
-
-    unzipResponse match {
-      case Success(s) =>
-        s match {
-          case 0 => state.log.info("Unzip gatling bundle successfully")
-          case _ => state.log.error("Failed unzipping gatling bundle")
-        }
-      case Failure(e) => state.log.error("Failed unzipping gatling bundle")
+      case Failure(e) => state.log.error("Failed unpacking gatling bundle.")
     }
 
     state
