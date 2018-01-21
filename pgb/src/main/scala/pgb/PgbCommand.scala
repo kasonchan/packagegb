@@ -1,6 +1,6 @@
 package pgb
 
-import pgb.Pgb.dlgb
+import pgb.Pgb._
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -11,20 +11,56 @@ import scala.util.{Failure, Success}
   */
 object PgbCommand {
 
-  def dl: Command = Command.args("dlgb", "<version>") { (state, args) =>
-    val response = args match {
-      case Seq()   => dlgb()
-      case version => dlgb(version.mkString(""))
+  def download: Command = Command.args("download", "<version>") {
+    (state, args) =>
+      val response = args match {
+        case Seq()   => downloadGB()
+        case version => downloadGB(version.mkString(""))
+      }
+
+      response match {
+        case Success(s) =>
+          s match {
+            case 0 => state.log.info(s"Downloaded gatling bundle successfully.")
+            case _ => state.log.error(s"Failed downloading gatling bundle.")
+          }
+        case Failure(e) => state.log.error("Failed downloading gatling bundle.")
+      }
+      state
+  }
+
+  def unpack: Command = Command.args("unpack", "<version>") { (state, args) =>
+    val unpackResponse = args match {
+      case Seq()   => unpackGB()
+      case version => unpackGB(version.mkString(""))
     }
 
-    response match {
+    unpackResponse match {
       case Success(s) =>
         s match {
-          case 0 => state.log.info("Success")
-          case _ => state.log.error("Fail")
+          case 0 => state.log.info("Unpacked gatling bundle successfully.")
+          case _ =>
+            state.log.warn(
+              "Some files may not be unpacked correctly. Check log for more detail.")
         }
-      case Failure(e) => state.log.error("Fail")
+      case Failure(e) =>
+        state.log.warn(
+          "Some files may not be unpacked correctly. Check log for more detail.")
     }
+
+    state
+  }
+
+  def cleanup: Command = Command.args("cleanup", "") { (state, args) =>
+    cleanGB match {
+      case Success(s) =>
+        s match {
+          case 0 => state.log.info("Cleaned up gatling bundle successfully.")
+          case _ => state.log.error("Failed cleaning up gatling bundle.")
+        }
+      case Failure(e) => state.log.error("Failed cleaning up gatling bundle.")
+    }
+
     state
   }
 

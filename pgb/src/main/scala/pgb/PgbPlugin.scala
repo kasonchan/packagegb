@@ -9,7 +9,9 @@ import sbt.{AutoPlugin, Keys}
 object PgbPlugin extends AutoPlugin {
 
   override lazy val projectSettings = Seq(
-    Keys.commands += PgbCommand.dl
+    Keys.commands ++= Seq(PgbCommand.download,
+                          PgbCommand.unpack,
+                          PgbCommand.cleanup)
   )
 
 }
