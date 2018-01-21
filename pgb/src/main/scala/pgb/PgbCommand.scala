@@ -1,6 +1,6 @@
 package pgb
 
-import pgb.Pgb.{downloadGB, unpackGB}
+import pgb.Pgb._
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -30,18 +30,35 @@ object PgbCommand {
   }
 
   def unpack: Command = Command.args("unpack", "<version>") { (state, args) =>
-    val unzipResponse = args match {
+    val unpackResponse = args match {
       case Seq()   => unpackGB()
       case version => unpackGB(version.mkString(""))
     }
 
-    unzipResponse match {
+    unpackResponse match {
       case Success(s) =>
         s match {
           case 0 => state.log.info("Unpacked gatling bundle successfully.")
-          case _ => state.log.error("Failed unpacking gatling bundle.")
+          case _ =>
+            state.log.warn(
+              "Some files may not be unpacked correctly. Check log for more detail.")
         }
-      case Failure(e) => state.log.error("Failed unpacking gatling bundle.")
+      case Failure(e) =>
+        state.log.warn(
+          "Some files may not be unpacked correctly. Check log for more detail.")
+    }
+
+    state
+  }
+
+  def cleanup: Command = Command.args("cleanup", "") { (state, args) =>
+    cleanGB match {
+      case Success(s) =>
+        s match {
+          case 0 => state.log.info("Cleaned up gatling bundle successfully.")
+          case _ => state.log.error("Failed cleaning up gatling bundle.")
+        }
+      case Failure(e) => state.log.error("Failed cleaning up gatling bundle.")
     }
 
     state

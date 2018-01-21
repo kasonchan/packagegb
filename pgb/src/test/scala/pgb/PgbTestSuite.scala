@@ -22,9 +22,9 @@ class PgbTestSuite
 
   When I call downloadGB(invalidVersion), I get exit code status {22} $downloadGBFailed
 
-  When I call unpackGB(), I get zip files and exit code {0} $unpackGBSucceeded
+  When I call unpackGB(), I get unzipped files and exit code {6} $unpackGBSucceeded
 
-  When I call unpackGB(invalidVersion), I get exit code status {9} $unpackGBFailed
+  When I call unpackGB(invalidVersion), I get exit code status {15} $unpackGBFailed
 
   """
 
@@ -38,7 +38,7 @@ class PgbTestSuite
       exitCode must_== expectedExitCode
 
       val removedFile: Int = Process(
-        Seq("/bin/sh", "-c", "rm -r gatling-charts-highcharts-bundle-*")).!
+        Seq("/bin/sh", "-c", "rm -rv gatling-charts-highcharts-bundle-*")).!
       removedFile must_== expectedExitCode
   }
 
@@ -65,6 +65,8 @@ class PgbTestSuite
   }
 
   def unpackGBFailed: String => Fragments = example(anInt) { expectedExitCode =>
+    downloadGB()
+
     val exitCode = unpackGB("invalidVersion") match {
       case Success(s) => s
       case Failure(e) => e

@@ -1,7 +1,7 @@
 package pgb
 
 import scala.sys.process._
-import scala.util.Try
+import scala.util.{Success, Try}
 
 /**
   * @author kasonchan
@@ -36,8 +36,7 @@ object Pgb {
       unzipGBResponse <- unzipGB(version)
       cpGBResponse <- cpGB(version)
       cpSimsResponse <- cpSims
-      cleanGBResponse <- cleanGB
-    } yield unzipGBResponse + cpGBResponse + cpSimsResponse + cleanGBResponse
+    } yield unzipGBResponse + cpGBResponse + cpSimsResponse
   }
 
   /**
@@ -45,7 +44,7 @@ object Pgb {
     * @param version User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
+  def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
     s"unzip gatling-charts-highcharts-bundle-$version-bundle.zip".!
   }
 
@@ -53,9 +52,11 @@ object Pgb {
     * Copy unzipped Gatling bundle to current directory.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cpGB(version: String = gatlingVersion): Try[Int] = {
+  def cpGB(version: String = gatlingVersion): Try[Int] = {
     lazy val moveExitCode = Try {
-      Seq("/bin/sh", "-c", s"cp -fv gatling-charts-highcharts-$version/* .").!
+      Seq("/bin/sh",
+          "-c",
+          s"\\cp -fpRv gatling-charts-highcharts-bundle-$version/* .").!
     }
 
     lazy val removeExitCode = Try {
@@ -72,19 +73,21 @@ object Pgb {
     * Copy simulation files and directories to the corresponding directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cpSims: Try[Int] = {
+  def cpSims: Try[Int] = {
     lazy val dataExitCode = Try {
-      Seq("/bin/sh", "-c", "cp -frv src/test/resources/data/* user-files/data").!
+      Seq("/bin/sh",
+          "-c",
+          "\\cp -fpRv src/test/resources/data/* user-files/data").!
     }
 
     lazy val resourcesExitCode = Try {
       Seq("/bin/sh",
           "-c",
-          "cp -frv src/test/resources/bodies/* user-files/bodies").!
+          "\\cp -fpRv src/test/resources/bodies/* user-files/bodies").!
     }
 
     lazy val scalaExitCode = Try {
-      Seq("/bin/sh", "-c", "cp -frv src/test/scala/* user-files/simulations").!
+      Seq("/bin/sh", "-c", "\\cp -fpRv src/test/scala/* user-files/simulations").!
     }
 
     for {
@@ -98,7 +101,7 @@ object Pgb {
     * Remove all Gatling bundle files and directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cleanGB: Try[Int] = {
+  def cleanGB: Try[Int] = {
     val gbDirectories = List("bin",
                              "conf",
                              "lib",
