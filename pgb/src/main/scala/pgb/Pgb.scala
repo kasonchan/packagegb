@@ -1,7 +1,7 @@
 package pgb
 
 import scala.sys.process._
-import scala.util.{Success, Try}
+import scala.util.Try
 
 /**
   * @author kasonchan
@@ -24,9 +24,8 @@ object Pgb {
 
   /**
     * Execute unzip gatling bundle files and directories to your project.
-    * Copy the gatling bundle files and directories to corresponding directories
-    * of your project.
-    * Clean unzipped gatling bundle files and directories.
+    * Copy the essential gatling bundle files and directories to your
+    * corresponding directories of your project.
     * @param version User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return
     *         Try(nonzero).
@@ -40,7 +39,7 @@ object Pgb {
   }
 
   /**
-    * Unzip the downloaded gatling bundle.
+    * Execute Unzip the downloaded gatling bundle.
     * @param version User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
@@ -49,7 +48,7 @@ object Pgb {
   }
 
   /**
-    * Copy unzipped Gatling bundle to current directory.
+    * Execute Copy unzipped Gatling bundle to current directory.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def cpGB(version: String = gatlingVersion): Try[Int] = {
@@ -70,7 +69,7 @@ object Pgb {
   }
 
   /**
-    * Copy simulation files and directories to the corresponding directories.
+    * Execute copy simulation files and directories to the corresponding directories.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def cpSims: Try[Int] = {
@@ -98,17 +97,36 @@ object Pgb {
   }
 
   /**
-    * Remove all Gatling bundle files and directories.
+    * Execute remove just gatling bundle files and directories and zip the project.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def cleanGB: Try[Int] = {
-    val gbDirectories = List("bin",
-                             "conf",
-                             "lib",
-                             "results",
-                             "user-files",
-                             "LICENSE",
-                             "gatling-charts-highcharts-bundle-*")
+  def packGB: Try[Int] = {
+    val currentPath = System.getProperty("user.dir")
+    lazy val basename: String = s"basename $currentPath".!!
+    lazy val zipExitCode = Try {
+      s"zip -rv ../$basename.zip ." !
+    }
+
+    for {
+      r <- cleanupGB
+      z <- zipExitCode
+    } yield r + z
+  }
+
+  /**
+    * Execute remove all Gatling bundle files and directories, build and zipped build.
+    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
+    */
+  def cleanupEverything: Try[Int] = {
+    val gbDirectories = List(
+      "bin",
+      "conf",
+      "lib",
+      "results",
+      "user-files",
+      "LICENSE",
+      "gatling-charts-highcharts-bundle-*",
+      s"../${new java.io.File(".").getCanonicalFile.getName}.zip")
 
     Try {
       Seq("/bin/sh", "-c", s"rm -rv ${gbDirectories.mkString(" ")}").!
@@ -116,17 +134,19 @@ object Pgb {
   }
 
   /**
-    * Remove all build file and Gatling bundle files and directories.
+    * Execute remove just Gatling bundle directory and zipped file.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  private def cleanBuild: Try[Int] = {
-    lazy val rmBuild = Try {
-      s"rm -rv ../${new java.io.File(".").getCanonicalFile.getName}.zip".!
-    }
+  def cleanupGB: Try[Int] = Try {
+    Seq("/bin/sh", "-c", "rm -frv gatling-charts-highcharts-bundle-*").!
+  }
 
-    for {
-      r <- rmBuild
-    } yield r
+  /**
+    * Execute remove the zipped build.
+    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
+    */
+  def cleanupBuild: Try[Int] = Try {
+    s"rm -rv ../${new java.io.File(".").getCanonicalFile.getName}.zip".!
   }
 
 }

@@ -26,8 +26,17 @@ class PgbIntegrationTestSuite
     When I enter sbt unpack invalidVersion
     Then I get exit code status {0} but no files are copied to current directory $unpackFailed
 
+    Given I have entered sbt download
     When I enter sbt unpack
     Then I get exit code {0} and copied file {0} $unpackSucceeded
+                                          
+    Given I have entered sbt download, sbt unpack
+    When I enter sbt pack
+    Then I get exit code {0} and zipped project at parent directory. $packSucceeded
+
+    Given I have entered sbt download, sbt unpack, sbt pack
+    When I enter sbt cleanup -e
+    Then I get exit code {0} and zipped project at parent directory. $cleanupSucceeded
   """
 
   def downloadFailed: String => Fragments = example(threeInts) {
@@ -78,7 +87,30 @@ class PgbIntegrationTestSuite
       val unpackExitCode: Int = Process(Seq("sbt", "unpack")).!
 
       downloadExitCode must_== expectedExitCodes._1
-      unpackExitCode must_== expectedExitCodes._1
+      unpackExitCode must_== expectedExitCodes._2
+  }
+
+  def packSucceeded: String => Fragments = example(anInt) { expectedExitCode =>
+    val downloadExitCode: Int = Process(Seq("sbt", "download")).!
+    val unpackExitCode: Int = Process(Seq("sbt", "unpack")).!
+    val packExitCode: Int = Process(Seq("sbt", "pack")).!
+
+    downloadExitCode must_== expectedExitCode
+    unpackExitCode must_== expectedExitCode
+    packExitCode must_== expectedExitCode
+  }
+
+  def cleanupSucceeded: String => Fragments = example(anInt) {
+    expectedExitCode =>
+      val downloadExitCode: Int = Process(Seq("sbt", "download")).!
+      val unpackExitCode: Int = Process(Seq("sbt", "unpack")).!
+      val packExitCode: Int = Process(Seq("sbt", "pack")).!
+      val cleanupExitCode: Int = Process(Seq("sbt", "cleanup")).!
+
+      downloadExitCode must_== expectedExitCode
+      unpackExitCode must_== expectedExitCode
+      packExitCode must_== expectedExitCode
+      cleanupExitCode must_== expectedExitCode
   }
 
 }
