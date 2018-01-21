@@ -3,7 +3,7 @@ package pgb
 import org.specs2._
 import org.specs2.specification.core.{Fragments, SpecStructure}
 import org.specs2.specification.script.StandardDelimitedStepParsers
-import pgb.Pgb.{downloadGB, unpackGB, packGB, cleanupEverything}
+import pgb.Pgb.{downloadGB, unpackGB, packGB, cleanupGB}
 
 import scala.sys.process.Process
 import scala.util.{Failure, Success}
@@ -29,8 +29,8 @@ class PgbTestSuite
   When I call packGB(), I get zipped project and exit code {0} $packGBSucceeded
                                           
   Given I have downloadGB()
-    When I call cleanupEverything
-    Then I get exit code status {0} $cleanupEverythingSucceeded
+    When I call cleanupGB()
+    Then I get exit code status {0} $cleanupGBSucceeded
 
   """
 
@@ -91,13 +91,13 @@ class PgbTestSuite
       exitCode must_== expectedExitCode
   }
 
-  def cleanupEverythingSucceeded = example(anInt) {
+  def cleanupGBSucceeded = example(anInt) {
     downloadGB()
     unpackGB()
     packGB
 
     expectedExitCode =>
-      val exitCode = cleanupEverything match {
+      val exitCode = cleanupGB match {
         case Success(s) => s
         case Failure(e) => e
       }

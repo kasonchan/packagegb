@@ -90,7 +90,7 @@ object PgbCommand {
         optionSeq.mkString("") match {
           case "-e" => cleanupEverything
           case "-b" => cleanupBuild
-          case "-g" => cleanupBuild
+          case "-g" => cleanupGB
         }
     }
 
