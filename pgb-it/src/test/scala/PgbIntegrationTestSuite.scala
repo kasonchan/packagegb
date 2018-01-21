@@ -66,11 +66,10 @@ class PgbIntegrationTestSuite
       removedFile must_== expectedExitCodes._3
   }
 
-  def unpackFailed: String => Fragments = example(twoInts) {
-    expectedExitCodes =>
-      val exitCode: Int = Process(Seq("sbt", "unpack invalidVersion")).!
+  def unpackFailed: String => Fragments = example(anInt) { expectedExitCode =>
+    val exitCode: Int = Process(Seq("sbt", "unpack invalidVersion")).!
 
-      exitCode must_== expectedExitCodes._1
+    exitCode must_== expectedExitCode
   }
 
   def unpackSucceeded: String => Fragments = example(twoInts) {
