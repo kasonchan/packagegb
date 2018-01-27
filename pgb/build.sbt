@@ -2,7 +2,7 @@ val name = "pgb"
 
 lazy val buildSettings = Seq(
   organization := "com.kasonchan",
-  version := "0.0.1-SNAPSHOT",
+  version := "0.0.1",
   scalaVersion := "2.12.4"
 )
 
@@ -54,6 +54,14 @@ lazy val publishSettings = Seq(
       "scm:git:git@github.com:kasonchan/pgb.git"
     )
   ),
+  developers := List(
+    Developer(
+      id = "kasonchan",
+      name = "Kason Chan",
+      email = "kasonl.chan@gmail.com",
+      url = url("https://github.com/kasonchan/")
+    )
+  ),
   pomExtra :=
     <developers>
       <developer>
@@ -62,6 +70,13 @@ lazy val publishSettings = Seq(
         <url>https://github.com/kasonchan</url>
       </developer>
     </developers>
+      <licenses>
+        <license>
+          <name>MIT</name>
+          <url>https://opensource.org/licenses/MIT</url>
+          <distribution>repo</distribution>
+        </license>
+      </licenses>
 )
 
 lazy val allSettings = baseSettings ++ buildSettings ++ publishSettings
