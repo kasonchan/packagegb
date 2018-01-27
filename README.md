@@ -17,3 +17,41 @@ In your `build.sbt` enable the plugin by adding the following:
 ```
 .enablePlugins(PgbPlugin)
 ```
+
+## SBT Commands
+
+- Download Gatling bundle:
+
+```
+sbt:pgb-it> download
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 55.3M  100 55.3M    0     0   329k      0  0:02:51  0:02:51 --:--:-- 1356k
+[info] Downloaded Gatling bundle successfully.
+```
+
+- Unpack Gatling bundle:
+
+```
+sbt:pgb-it> unpack
+```
+
+- Pack Gatling bundle and your project:
+
+```
+sbt:pgb-it> pack
+```
+
+- Cleanup Gatling bundle and/or built project, follow by option. 
+  Default is set to `-e` to remove everything:
+  - `-e` - removes everything including Gatling bundle and your project build
+  - `-b` - removes your build project only
+  - `-g` - removes Gatling bundle only
+
+```
+sbt:pgb-it> cleanup [option]
+```
+
+## License
+
+This code is open source software licensed under the [MIT](https://opensource.org/licenses/MIT) license.
