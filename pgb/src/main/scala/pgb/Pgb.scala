@@ -9,11 +9,14 @@ import scala.util.Try
   */
 object Pgb {
 
+  /**
+    * Current Gatling release version
+    */
   lazy val gatlingVersion = "2.3.0"
 
   /**
     * Execute curl -fO to download gatling bundle.
-    * @param version User specified version.
+    * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def downloadGB(version: String = gatlingVersion): Try[Int] = Try {
@@ -26,7 +29,7 @@ object Pgb {
     * Execute unzip gatling bundle files and directories to your project.
     * Copy the essential gatling bundle files and directories to your
     * corresponding directories of your project.
-    * @param version User specified version.
+    * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return
     *         Try(nonzero).
     */
@@ -40,7 +43,7 @@ object Pgb {
 
   /**
     * Execute Unzip the downloaded gatling bundle.
-    * @param version User specified version.
+    * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
@@ -49,6 +52,7 @@ object Pgb {
 
   /**
     * Execute Copy unzipped Gatling bundle to current directory.
+    * @param version String User specified version
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def cpGB(version: String = gatlingVersion): Try[Int] = {

@@ -33,7 +33,38 @@ val baseSettings = Seq(
   parallelExecution in ThisBuild := false
 )
 
-lazy val allSettings = baseSettings ++ buildSettings
+lazy val publishSettings = Seq(
+  publishMavenStyle := true,
+  publishArtifact := true,
+  publishTo := {
+    val nexus = "https://oss.sonatype.org/"
+    if (isSnapshot.value)
+      Some("snapshots" at nexus + "content/repositories/snapshots")
+    else
+      Some("releases" at nexus + "service/local/staging/deploy/maven2")
+  },
+  publishArtifact in Test := false,
+  licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
+  homepage := Some(url("https://github.com/kasonchan/pgb")),
+  autoAPIMappings := true,
+  apiURL := None,
+  scmInfo := Some(
+    ScmInfo(
+      url("https://github.com/kasonchan/pgb"),
+      "scm:git:git@github.com:kasonchan/pgb.git"
+    )
+  ),
+  pomExtra :=
+    <developers>
+      <developer>
+        <id>kasonchan</id>
+        <name>Kason Chan</name>
+        <url>https://github.com/kasonchan</url>
+      </developer>
+    </developers>
+)
+
+lazy val allSettings = baseSettings ++ buildSettings ++ publishSettings
 
 lazy val pgb = (project in file("."))
   .configs(IntegrationTest)
