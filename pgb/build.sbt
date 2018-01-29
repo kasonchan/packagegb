@@ -36,13 +36,8 @@ val baseSettings = Seq(
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
   publishArtifact := true,
-  publishTo := {
-    val nexus = "https://oss.sonatype.org/"
-    if (isSnapshot.value)
-      Some("snapshots" at nexus + "content/repositories/snapshots")
-    else
-      Some("releases" at nexus + "service/local/staging/deploy/maven2")
-  },
+  publishTo := sonatypePublishTo.value,
+  credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
   publishArtifact in Test := false,
   licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
   homepage := Some(url("https://github.com/kasonchan/pgb")),
@@ -61,22 +56,7 @@ lazy val publishSettings = Seq(
       email = "kasonl.chan@gmail.com",
       url = url("https://github.com/kasonchan/")
     )
-  ),
-  pomExtra :=
-    <developers>
-      <developer>
-        <id>kasonchan</id>
-        <name>Kason Chan</name>
-        <url>https://github.com/kasonchan</url>
-      </developer>
-    </developers>
-      <licenses>
-        <license>
-          <name>MIT</name>
-          <url>https://opensource.org/licenses/MIT</url>
-          <distribution>repo</distribution>
-        </license>
-      </licenses>
+  )
 )
 
 lazy val allSettings = baseSettings ++ buildSettings ++ publishSettings
