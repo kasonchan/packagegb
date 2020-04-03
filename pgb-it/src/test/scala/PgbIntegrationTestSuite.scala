@@ -29,7 +29,7 @@ class PgbIntegrationTestSuite
     Given I have entered sbt download
     When I enter sbt unpack
     Then I get exit code {0} and copied file {0} $unpackSucceeded
-                                          
+
     Given I have entered sbt download, sbt unpack
     When I enter sbt pack
     Then I get exit code {0} and zipped project at parent directory. $packSucceeded
@@ -64,14 +64,13 @@ class PgbIntegrationTestSuite
         Process(
           Seq("/bin/sh",
               "-c",
-              "find",
-              "gatling-charts-highcharts-bundle-*.zip")).!
+              "find ../gatling-charts-highcharts-bundle-*.zip")).!
 
       exitCode must_== expectedExitCodes._1
       fileExisted must_== expectedExitCodes._2
 
       val removedFile: Int = Process(
-        Seq("/bin/sh", "-c", "rm gatling-charts-highcharts-bundle-*.zip")).!
+        Seq("/bin/sh", "-c", "rm ../gatling-charts-highcharts-bundle-*.zip")).!
       removedFile must_== expectedExitCodes._3
   }
 
