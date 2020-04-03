@@ -12,23 +12,21 @@ object Pgb {
   /**
     * Current Gatling release version
     */
-  lazy val gatlingVersion = "2.3.0"
+  lazy val gatlingVersion = "3.3.1"
 
   /**
-    * Execute curl -fO to download gatling bundle.
+    * Execute curl to download gatling bundle to the parent directory.
     * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def downloadGB(version: String = gatlingVersion): Try[Int] = Try {
     lazy val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
       s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
-    s"curl -fO $link".!
+    s"curl -f0 $link --output ../gatling-charts-highcharts-bundle-$version.zip".!
   }
 
   /**
-    * Execute unzip gatling bundle files and directories to your project.
-    * Copy the essential gatling bundle files and directories to your
-    * corresponding directories of your project.
+    * Execute unzip gatling bundle files and directories to the parent directory.
     * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return
     *         Try(nonzero).
@@ -36,121 +34,103 @@ object Pgb {
   def unpackGB(version: String = gatlingVersion): Try[Int] = {
     for {
       unzipGBResponse <- unzipGB(version)
-      cpGBResponse <- cpGB(version)
-      cpSimsResponse <- cpSims
-    } yield unzipGBResponse + cpGBResponse + cpSimsResponse
+    } yield unzipGBResponse
   }
 
   /**
-    * Execute Unzip the downloaded gatling bundle.
+    * Execute unzip the downloaded gatling bundle.
     * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
-    s"unzip gatling-charts-highcharts-bundle-$version-bundle.zip".!
-  }
-
-  /**
-    * Execute Copy unzipped Gatling bundle to current directory.
-    * @param version String User specified version
-    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
-    */
-  def cpGB(version: String = gatlingVersion): Try[Int] = {
-    lazy val moveExitCode = Try {
-      Seq("/bin/sh",
-          "-c",
-          s"\\cp -fpRv gatling-charts-highcharts-bundle-$version/* .").!
-    }
-
-    lazy val removeExitCode = Try {
-      Seq("/bin/sh", "-c", "rm -rv user-files/simulations/*").!
-    }
-
-    for {
-      m <- moveExitCode
-      r <- removeExitCode
-    } yield m + r
+  private def unzipGB(version: String = gatlingVersion): Try[Int] = Try {
+    s"unzip ../gatling-charts-highcharts-bundle-$version.zip -d ..".!
   }
 
   /**
     * Execute copy simulation files and directories to the corresponding directories.
+    * @param version String User specified version.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def cpSims: Try[Int] = {
+  private def cpSims(version: String = gatlingVersion,
+                     newGatlingBundleName: String): Try[Int] = {
     lazy val dataExitCode = Try {
-      Seq("/bin/sh",
-          "-c",
-          "\\cp -fpRv src/test/resources/data/* user-files/data").!
+      Seq(
+        "/bin/sh",
+        "-c",
+        s"\\cp -fpRv src/test/resources/data/* ../${newGatlingBundleName}/user-files/data").!
     }
 
     lazy val resourcesExitCode = Try {
+      Seq(
+        "/bin/sh",
+        "-c",
+        s"\\cp -fpRv src/test/resources/bodies/* ../${newGatlingBundleName}/user-files/bodies").!
+    }
+
+    lazy val cleanupSims = Try {
       Seq("/bin/sh",
           "-c",
-          "\\cp -fpRv src/test/resources/bodies/* user-files/bodies").!
+          s"rm -rfv ../${newGatlingBundleName}/user-files/simulations/*").!
     }
 
     lazy val scalaExitCode = Try {
-      Seq("/bin/sh", "-c", "\\cp -fpRv src/test/scala/* user-files/simulations").!
+      Seq(
+        "/bin/sh",
+        "-c",
+        s"\\cp -fpRv src/test/scala/* ../${newGatlingBundleName}/user-files/simulations").!
     }
 
     for {
       d <- dataExitCode
       r <- resourcesExitCode
+      c <- cleanupSims
       s <- scalaExitCode
-    } yield d + r + s
+    } yield d + r + c + s
   }
 
   /**
     * Execute remove just gatling bundle files and directories and zip the project.
+    * @param version String User specified version.
+    * @param newGatlingBundleName String User specified new bundle name.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def packGB: Try[Int] = {
-    val currentPath = System.getProperty("user.dir")
-    lazy val basename: String = s"basename $currentPath".!!
+  def packGB(version: String = gatlingVersion,
+             newGatlingBundleName: String): Try[Int] = {
     lazy val zipExitCode = Try {
-      s"zip -rv ../$basename.zip ." !
+      s"zip -rv ../$newGatlingBundleName.zip ../$newGatlingBundleName".!
     }
 
     for {
-      r <- cleanupGB
+      m <- mvGB(version, newGatlingBundleName)
+      c <- cpSims(version, newGatlingBundleName)
       z <- zipExitCode
-    } yield r + z
+    } yield m + c + z
   }
 
   /**
-    * Execute remove all Gatling bundle files and directories, build and zipped build.
+    * Execute rename the unzipped update directory with newGatlingBundleName.
+    * @param version String User specified version.
+    * @param newGatlingBundleName String User specified new bundle name.
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def cleanupEverything: Try[Int] = {
-    val gbDirectories = List(
-      "bin",
-      "conf",
-      "lib",
-      "results",
-      "user-files",
-      "LICENSE",
-      "gatling-charts-highcharts-bundle-*",
-      s"../${new java.io.File(".").getCanonicalFile.getName}.zip")
+  private def mvGB(version: String = gatlingVersion,
+                   newGatlingBundleName: String): Try[Int] = Try {
+    Seq(
+      "/bin/sh",
+      "-c",
+      s"mv -v ../gatling-charts-highcharts-bundle-$version ../$newGatlingBundleName").!
+  }
 
+  /**
+    * Execute remove Gatling bundle directory and packed directory.
+    * @param newGatlingBundleName String User specified new bundle name.
+    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
+    */
+  def cleanupGB(newGatlingBundleName: String): Try[Int] =
     Try {
-      Seq("/bin/sh", "-c", s"rm -rv ${gbDirectories.mkString(" ")}").!
+      Seq(
+        "/bin/sh",
+        "-c",
+        s"rm -frv ../gatling-charts-highcharts-bundle-* ../$newGatlingBundleName").!
     }
-  }
-
-  /**
-    * Execute remove just Gatling bundle directory and zipped file.
-    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
-    */
-  def cleanupGB: Try[Int] = Try {
-    Seq("/bin/sh", "-c", "rm -frv gatling-charts-highcharts-bundle-*").!
-  }
-
-  /**
-    * Execute remove the zipped build.
-    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
-    */
-  def cleanupBuild: Try[Int] = Try {
-    s"rm -rv ../${new java.io.File(".").getCanonicalFile.getName}.zip".!
-  }
-
 }

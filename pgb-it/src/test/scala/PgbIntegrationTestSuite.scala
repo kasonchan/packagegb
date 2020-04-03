@@ -93,7 +93,7 @@ class PgbIntegrationTestSuite
   def packSucceeded: String => Fragments = example(anInt) { expectedExitCode =>
     val downloadExitCode: Int = Process(Seq("sbt", "download")).!
     val unpackExitCode: Int = Process(Seq("sbt", "unpack")).!
-    val packExitCode: Int = Process(Seq("sbt", "pack")).!
+    val packExitCode: Int = Process(Seq("sbt", "pack test")).!
 
     downloadExitCode must_== expectedExitCode
     unpackExitCode must_== expectedExitCode
@@ -104,8 +104,8 @@ class PgbIntegrationTestSuite
     expectedExitCode =>
       val downloadExitCode: Int = Process(Seq("sbt", "download")).!
       val unpackExitCode: Int = Process(Seq("sbt", "unpack")).!
-      val packExitCode: Int = Process(Seq("sbt", "pack")).!
-      val cleanupExitCode: Int = Process(Seq("sbt", "cleanup")).!
+      val packExitCode: Int = Process(Seq("sbt", "pack test")).!
+      val cleanupExitCode: Int = Process(Seq("sbt", "cleanup test")).!
 
       downloadExitCode must_== expectedExitCode
       unpackExitCode must_== expectedExitCode

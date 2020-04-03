@@ -1,1 +1,1 @@
-addSbtPlugin("com.kasonchan" % "pgb" % "0.0.1")
+addSbtPlugin("com.kasonchan" % "pgb" % "0.0.2")

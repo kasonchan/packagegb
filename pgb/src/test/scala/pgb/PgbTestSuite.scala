@@ -3,7 +3,7 @@ package pgb
 import org.specs2._
 import org.specs2.specification.core.{Fragments, SpecStructure}
 import org.specs2.specification.script.StandardDelimitedStepParsers
-import pgb.Pgb.{downloadGB, unpackGB, packGB, cleanupGB}
+import pgb.Pgb.{cleanupGB, downloadGB, packGB, unpackGB}
 
 import scala.sys.process.Process
 import scala.util.{Failure, Success}
@@ -22,13 +22,13 @@ class PgbTestSuite
 
   When I call downloadGB(invalidVersion), I get exit code status {22} $downloadGBFailed
 
-  When I call unpackGB(), I get unzipped files and exit code {2} $unpackGBSucceeded
+  When I call unpackGB(), I get unzipped files and exit code {0} $unpackGBSucceeded
 
-  When I call unpackGB(invalidVersion), I get exit code status {12} $unpackGBFailed
+  When I call unpackGB(invalidVersion), I get exit code status {9} $unpackGBFailed
 
-  When I call packGB(), I get zipped project and exit code {0} $packGBSucceeded
+  When I call packGB(), I get zipped project and exit code {1} $packGBSucceeded
                                           
-  Given I have downloadGB()
+  Given I have downloadGB(), unpackGB() and packGB()
     When I call cleanupGB()
     Then I get exit code status {0} $cleanupGBSucceeded
 
@@ -40,11 +40,12 @@ class PgbTestSuite
         case Success(s) => s
         case Failure(e) => e
       }
-
       exitCode must_== expectedExitCode
 
-      val removedFile: Int = Process(
-        Seq("/bin/sh", "-c", "rm -rv gatling-charts-highcharts-bundle-*")).!
+      val removedFile: Int =
+        Process(Seq("/bin/sh",
+                    "-c",
+                    "rm -rv ../gatling-charts-highcharts-bundle-*")).!
       removedFile must_== expectedExitCode
   }
 
@@ -54,7 +55,6 @@ class PgbTestSuite
         case Success(s) => s
         case Failure(e) => e
       }
-
       exitCode must_== expectedExitCode
   }
 
@@ -66,43 +66,54 @@ class PgbTestSuite
         case Success(s) => s
         case Failure(e) => e
       }
-
       exitCode must_== expectedExitCode
+
+      val removedFile: Int =
+        Process(Seq("/bin/sh",
+                    "-c",
+                    "rm -rv ../gatling-charts-highcharts-bundle-*")).!
+      removedFile must_== expectedExitCode
   }
 
   def unpackGBFailed: String => Fragments = example(anInt) { expectedExitCode =>
-    downloadGB()
+    downloadGB("invalidVersion")
 
     val exitCode = unpackGB("invalidVersion") match {
       case Success(s) => s
       case Failure(e) => e
     }
-
     exitCode must_== expectedExitCode
   }
 
   def packGBSucceeded: String => Fragments = example(anInt) {
-    expectedExitCode =>
-      val exitCode = packGB match {
-        case Success(s) => s
-        case Failure(e) => e
-      }
-
-      exitCode must_== expectedExitCode
-  }
-
-  def cleanupGBSucceeded = example(anInt) {
     downloadGB()
     unpackGB()
-    packGB
 
     expectedExitCode =>
-      val exitCode = cleanupGB match {
+      val exitCode = packGB(newGatlingBundleName = "test") match {
         case Success(s) => s
         case Failure(e) => e
       }
-
       exitCode must_== expectedExitCode
+
+      val removedFile: Int =
+        Process(
+          Seq("/bin/sh",
+              "-c",
+              "rm -rv ../gatling-charts-highcharts-bundle-* ../test")).!
+      removedFile must_== expectedExitCode
   }
 
+  def cleanupGBSucceeded: String => Fragments = example(anInt) {
+    downloadGB()
+    unpackGB()
+    packGB(newGatlingBundleName = "test")
+
+    expectedExitCode =>
+      val exitCode = cleanupGB(newGatlingBundleName = "test") match {
+        case Success(s) => s
+        case Failure(e) => e
+      }
+      exitCode must_== expectedExitCode
+  }
 }
