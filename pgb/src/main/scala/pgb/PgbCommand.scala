@@ -26,17 +26,21 @@ object PgbCommand {
         case Success(s) =>
           s match {
             case 0 => state.log.info(s"Downloaded Gatling bundle successfully.")
-            case _ => state.log.error(s"Failed downloading Gatling bundle.")
+            case _ =>
+              state.log.error(
+                s"Failed downloading Gatling bundle. Check log for more detail.")
           }
-        case Failure(e) => state.log.error("Failed downloading Gatling bundle.")
+        case Failure(e) =>
+          state.log.error(
+            "Failed downloading Gatling bundle. Check log for more detail.")
       }
+
       state
   }
 
   /**
     * Unpack the Gatling bundle.
-    * Unzip the downloaded Gatling bundle, copy the essential Gatling bundle
-    * files and directories to your project.
+    * Unzip the downloaded Gatling bundle to the parent directory.
     * @return @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def unpack: Command = Command.args("unpack", "<version>") { (state, args) =>
@@ -67,19 +71,30 @@ object PgbCommand {
     * at the parent directory.
     * @return @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def pack: Command = Command.args("pack", "") { (state, args) =>
-    packGB match {
-      case Success(s) =>
-        s match {
-          case 0 =>
-            state.log.info("Packed Gatling bundle and build successfully.")
-          case _ => state.log.error("Failed packing Gatling bundle and build.")
+  def pack: Command = Command.args("pack", "<new gatling bundle name>") {
+    (state, args) =>
+      args match {
+        case Seq() =>
+          state.log.error(
+            "Failed packing Gatling bundle and build. Check log for more detail.")
+        case optionSeq => {
+          packGB(newGatlingBundleName = optionSeq.mkString("")) match {
+            case Success(s) =>
+              s match {
+                case 0 =>
+                  state.log.info(
+                    "Packed Gatling bundle and build successfully.")
+                case _ =>
+                  state.log.error(
+                    "Failed packing Gatling bundle and build. Check log for more detail.")
+              }
+            case Failure(e) =>
+              state.log.error(
+                "Failed packing Gatling bundle and build. Check log for more detail.")
+          }
         }
-      case Failure(e) =>
-        state.log.error("Failed packing Gatling bundle and build.")
-    }
-
-    state
+      }
+      state
   }
 
   /**
@@ -87,27 +102,22 @@ object PgbCommand {
     * Default is set to remove everything from Gatling bundle and build files.
     * @return @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
-  def cleanup: Command = Command.args("cleanup", "<option>") { (state, args) =>
-    val cleanupResponse = args match {
-      case Seq() => cleanupEverything
-      case optionSeq =>
-        optionSeq.mkString("") match {
-          case "-e" => cleanupEverything
-          case "-b" => cleanupBuild
-          case "-g" => cleanupGB
-        }
-    }
+  def cleanup: Command = Command.args("cleanup", "<new gatling bundle name>") {
+    (state, args) =>
+      val cleanupResponse = cleanupGB(newGatlingBundleName = args.mkString(""))
 
-    cleanupResponse match {
-      case Success(s) =>
-        s match {
-          case 0 => state.log.info("Cleaned up successfully.")
-          case _ => state.log.error("Failed cleaning up.")
-        }
-      case Failure(e) => state.log.error("Failed cleaning up.")
-    }
+      cleanupResponse match {
+        case Success(s) =>
+          s match {
+            case 0 => state.log.info("Cleaned up successfully.")
+            case _ =>
+              state.log.error("Failed cleaning up. Check log for more detail.")
+          }
+        case Failure(e) =>
+          state.log.error("Failed cleaning up. Check log for more detail.")
+      }
 
-    state
+      state
   }
 
 }

@@ -9,7 +9,7 @@ A simple sbt plugin for automating package and deploy Gatling bundle and test.
 Add the following to your `project/plugins.sbt` file:
 
 ```
-addSbtPlugin("com.kasonchan" % "pgb" % "0.0.1")
+addSbtPlugin("com.kasonchan" % "pgb" % "0.0.2")
 ```
 
 In your `build.sbt` enable the plugin by adding the following:
@@ -42,14 +42,10 @@ sbt:pgb-it> unpack
 sbt:pgb-it> pack
 ```
 
-- Cleanup Gatling bundle and/or built project, follow by option. 
-  Default is set to `-e` to remove everything:
-  - `-e` - removes everything including Gatling bundle and your project build
-  - `-b` - removes your build project only
-  - `-g` - removes Gatling bundle only
+- Cleanup Gatling bundle:
 
 ```
-sbt:pgb-it> cleanup [option]
+sbt:pgb-it> cleanup
 ```
 
 ## License
