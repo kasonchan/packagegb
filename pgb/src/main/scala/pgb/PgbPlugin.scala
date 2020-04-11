@@ -12,16 +12,28 @@ import scala.sys.process._
   */
 object PgbPlugin extends AutoPlugin {
   object autoImport {
-    val deploy: TaskKey[Int] =
-      taskKey[Int]("Produces a zipped project bundled with Gatling.")
+    import complete.DefaultParsers.spaceDelimited
+
+    val deploy: InputKey[Int] =
+      InputKey[Int]("Produces a zipped project bundled with Gatling.")
 
     def baseDeploySettings: Seq[Def.Setting[_]] =
       Seq(deploy := {
+        val args: Seq[String] = spaceDelimited("<version>").parsed
         val newBundleName = s"${name.value}-${version.value}"
         Pgb.deployGB()
         state.value.log.info(s"$newBundleName")
-        state.value.log.info(s"${Pgb.gatlingVersion}")
-        s"./${Pgb.scriptName} $newBundleName ${Pgb.gatlingVersion}".!
+        args match {
+          case Seq() =>
+            state.value.log.info(s"${Pgb.gatlingVersion}")
+            s"./${Pgb.scriptName} $newBundleName ${Pgb.gatlingVersion}".!
+          case Seq(version: String) =>
+            state.value.log.info(s"$version")
+            s"./${Pgb.scriptName} $newBundleName $version".!
+          case _ =>
+            state.value.log.warn("sbt> deploy <version>")
+            -1
+        }
       })
   }
 

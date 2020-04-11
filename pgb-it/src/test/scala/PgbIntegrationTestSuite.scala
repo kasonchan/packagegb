@@ -25,6 +25,9 @@ class PgbIntegrationTestSuite
 
     When I enter sbt deploy
     Then I get exit code {0}, zip files exit code {0} and removed {0} $deploySucceeded
+    
+    When I enter sbt deploy 3.3.0
+    Then I get exit code {0}, zip files exit code {0} and removed {0} $deployVersionedSucceeded
   """
 
   def downloadFailed: String => Fragments = example(threeInts) {
@@ -78,8 +81,34 @@ class PgbIntegrationTestSuite
       exitCode must_== expectedExitCodes._1
       fileExisted must_== expectedExitCodes._2
 
+      val removedFiles: Int =
+        Process(
+          Seq(
+            "/bin/sh",
+            "-c",
+            "rm -v ../pgb-it-0.0.3.zip /tmp/pgb-it-0.0.3* /tmp/gatling-charts-highcharts-bundle-*")).!
+      removedFiles must_== expectedExitCodes._3
+
+      val removedScripts: Int =
+        Process(Seq("/bin/sh", "-c", "rm -rv pgb-scripts")).!
+      removedScripts must_== expectedExitCodes._3
+  }
+
+  def deployVersionedSucceeded: String => Fragments = example(threeInts) {
+    expectedExitCodes =>
+      val exitCode: Int = Process(Seq("sbt", """deploy 3.3.0""")).!
+      val fileExisted: Int =
+        Process(Seq("/bin/sh", "-c", "find /tmp/pgb-it-0.0.3.zip")).!
+
+      exitCode must_== expectedExitCodes._1
+      fileExisted must_== expectedExitCodes._2
+
       val removedFile: Int =
-        Process(Seq("/bin/sh", "-c", "rm -v ../pgb-it-0.0.3.zip")).!
+        Process(
+          Seq(
+            "/bin/sh",
+            "-c",
+            "rm -v ../pgb-it-0.0.3.zip /tmp/pgb-it-0.0.3* /tmp/gatling-charts-highcharts-bundle-*")).!
       removedFile must_== expectedExitCodes._3
 
       val removedScripts: Int =

@@ -22,12 +22,15 @@ Gatling current release verion is `3.3.1`.
 
 ## SBT Commands
 
-pgb creates zipped test project with current release version Gatling bundle
+pgb downloads and creates zipped test project with current release version Gatling bundle.
 
 - Deploy your test project
 
+You can optionally specify a version to bundle with your test project.
+
 ```
 sbt> deploy
+sbt> deploy <version>
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k
@@ -41,12 +44,15 @@ sbt> deploy
 
 - Download Gatling bundle
 
+You can optionally specify a Gatling bundle version to be downloaded.
+
 ```
+sbt> download
 sbt> download <version>
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k
-[info] Downloaded Gatling bundle successfully.
+[info] Downloaded Gatling bundle <version> successfully.
 ```
 
 ## Gotchas

@@ -25,7 +25,9 @@ object PgbCommand {
       downloadResponse match {
         case Success(s) =>
           s match {
-            case 0 => state.log.info(s"Downloaded Gatling bundle successfully")
+            case 0 =>
+              state.log.info(
+                s"Downloaded Gatling bundle ${args.mkString} successfully")
             case _ =>
               state.log.warn(
                 s"Failed downloading Gatling bundle and check log for more detail")
