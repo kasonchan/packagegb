@@ -2,7 +2,7 @@ import pgb.PgbPlugin
 
 name := "pgb-it"
 
-version := "0.0.2"
+version := "0.0.3"
 
 scalaVersion := "2.12.10"
 

@@ -1,32 +1,4 @@
-package pgb
-
-import java.io.{File, PrintWriter}
-
-import scala.sys.process._
-import scala.util.Try
-
-/**
-  * @author kasonchan
-  * @since Jan-2018
-  */
-object Pgb {
-  val gatlingVersion: String = "3.3.1"
-  val scriptPath = "pgb-scripts"
-  val scriptName = s"$scriptPath/pgb-deploy.sh"
-
-  /**
-    * Execute curl to download gatling bundle to the parent directory.
-    * @param version String User specified version.
-    * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
-    */
-  def downloadGB(version: String = gatlingVersion): Try[Int] = Try {
-    val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
-      s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
-    s"curl -f0 $link --output /tmp/gatling-charts-highcharts-bundle-$version.zip".!
-  }
-
-  private val scriptText: String =
-    """#!/bin/bash
+#!/bin/bash
 
 #
 # @author kasonchan
@@ -38,14 +10,14 @@ PARENT_DIRECTORY=${PWD%/*}
 BASENAME=$(basename "$CURRENT_DIRECTORY")
 
 if [ "$BASENAME" == "scripts" ]; then
-  echo "[error] Please run deploy.sh at your project directory. Usage: ./pgb-scripts/pgb-deploy.sh <package_name> <gatling_bundle_version>"
+  echo "[error] Please run deploy.sh at your project directory. Usage: ./scripts/deploy.sh <package_name> <gatling_bundle_version>"
   exit 1
 else
   PACKAGE_NAME=$1
   GATLING_BUNDLE_VERSION=$2
 
   if [ $# -ne 2 ]; then
-    echo "Usage: ./pgb-scripts/pgb-deploy.sh <package_name> <gatling_bundle_version>"
+    echo "Usage: ./script/deploy.sh <package_name> <gatling_bundle_version>"
   else
     echo "$CURRENT_DIRECTORY"
     echo "$PARENT_DIRECTORY"
@@ -59,7 +31,7 @@ else
     if [ $? -ne 0 ]; then
       echo "[error] Invalid Gatling bundle version $GATLING_BUNDLE_VERSION"
     else
-      echo "[info] Downloaded Gatling bundle $GATLING_BUNDLE_VERSION successfully"
+      echo "[info] Downloaded Gatling bundle successfully"
 
       # Unzip Gatling bundle and rename it to package name in /tmp
       unzip /tmp/gatling-charts-highcharts-bundle-$GATLING_BUNDLE_VERSION.zip -d /tmp
@@ -95,21 +67,3 @@ else
     fi
   fi
 fi
-""".stripMargin
-
-  /**
-    * Execute creating deploy script.
-    * @return Try(Unit) if process is executed.
-    */
-  def deployGB(): Try[Unit] = Try {
-    val newDirectory = new File(scriptPath)
-    newDirectory.mkdir()
-
-    val script = new File(scriptName)
-    val writer = new PrintWriter(script)
-    writer.write(scriptText)
-    writer.close()
-
-    script.setExecutable(true)
-  }
-}
