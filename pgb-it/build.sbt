@@ -12,3 +12,5 @@ lazy val plugins = (project in file("."))
 libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "4.8.3" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+gatlingVersion := "3.3.1"

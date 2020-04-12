@@ -12,17 +12,22 @@ Add the following to your `project/plugins.sbt` file:
 addSbtPlugin("com.kasonchan" % "pgb" % "0.0.3")
 ```
 
-In your `build.sbt` enable the plugin by adding the following:
+In your `build.sbt`, enable the plugin by adding the following and, 
+specify the Gatling version `gatlingVersion := "<version>"` that you want 
+your project to bundle with:
 
 ```
-.enablePlugins(PgbPlugin)
+enablePlugins(PgbPlugin)
+
+gatlingVersion := "3.3.1"
 ```
 
-Gatling current release verion is `3.3.1`.
+Current Gatling bundle release verion is `3.3.1`.
 
 ## SBT Commands
 
-pgb downloads and creates zipped test project with current release version Gatling bundle.
+pgb downloads and creates zipped test project with Gatling bundle verison 
+`gatlingVersion` that you specified in `build.sbt`.
 
 - Deploy your test project
 
@@ -32,7 +37,9 @@ sbt> deploy
                                  Dload  Upload   Total   Spent    Left  Speed
 100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k
 ...
-[info] Downloaded Gatling bundle <version> successfully
+[info] Project <name>-<version>
+[info] Gatling bundle <gatlingVersion>
+[info] Downloaded Gatling bundle <gatlingVersion> successfully
 [info] Unzipped Gatling bundle successfully
 [info] Copied your project to Gatling bundle successfully
 [info] Zipped your project successfully
@@ -41,15 +48,23 @@ sbt> deploy
 
 - Download Gatling bundle
 
+pgb downloads current Gatling bundle. 
 You can optionally specify a Gatling bundle version to be downloaded.
 
 ```
 sbt> download
-sbt> download <version>
+[info] Downloading Gatling bundle 3.3.1
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k
-[info] Downloaded Gatling bundle <version> successfully.
+[info] Downloaded Gatling bundle successfully
+
+sbt> download <version>
+[info] Downloading Gatling bundle <version>
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k
+[info] Downloaded Gatling bundle successfully
 ```
 
 ## Gotchas

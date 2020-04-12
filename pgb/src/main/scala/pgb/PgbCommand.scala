@@ -22,7 +22,7 @@ object PgbCommand {
           Pgb.downloadGB()
         case version =>
           state.log.info(s"Downloading Gatling bundle ${version.mkString}")
-          Pgb.downloadGB(version.mkString(""))
+          Pgb.downloadGB(version.mkString)
       }
 
       downloadResponse match {

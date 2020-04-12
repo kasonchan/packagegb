@@ -84,7 +84,7 @@ class PgbIntegrationTestSuite
           Seq(
             "/bin/sh",
             "-c",
-            "rm -rv ../pgb-it-0.0.3.zip /tmp/pgb-it-0.0.3* /tmp/gatling-charts-highcharts-bundle-*")).!
+            "rm -rv ../pgb-it-0.0.3.zip /tmp/pgb-it-0.0.3* /tmp/gatling-charts-highcharts-bundle-3.3.1*")).!
       removedFiles must_== expectedExitCodes._3
 
       val removedScripts: Int =

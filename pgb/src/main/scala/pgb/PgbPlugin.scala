@@ -14,19 +14,18 @@ object PgbPlugin extends AutoPlugin {
   object autoImport {
     val deploy: TaskKey[Int] =
       taskKey[Int]("produces a zipped project bundled with Gatling")
-    val gatlingVersion: TaskKey[String] =
-      taskKey[String]("sets Gatling bundle version")
+    val gatlingVersion: SettingKey[String] =
+      settingKey[String]("sets Gatling bundle version")
 
     def baseDeploySettings: Seq[Def.Setting[_]] =
       Seq(
         deploy := {
-          val newBundleName = s"${name.value}-${version.value}"
+          val projectName = s"${name.value}-${version.value}"
           Pgb.deployGB()
-          state.value.log.info(s"$newBundleName")
-          state.value.log.info(s"${gatlingVersion.value}")
-          s"./${Pgb.scriptName} $newBundleName ${gatlingVersion.value}".!
-        },
-        gatlingVersion := s"${Pgb.gatlingVersion}"
+          state.value.log.info(s"Project $projectName")
+          state.value.log.info(s"Gatling bundle ${gatlingVersion.value}")
+          s"./${Pgb.scriptName} $projectName ${gatlingVersion.value}".!
+        }
       )
   }
 
