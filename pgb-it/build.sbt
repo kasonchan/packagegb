@@ -13,4 +13,6 @@ libraryDependencies ++= Seq("org.specs2" %% "specs2-core" % "4.8.3" % "test")
 
 scalacOptions in Test ++= Seq("-Yrangepos")
 
+scalafmtOnCompile := true
+
 gatlingVersion := "3.3.1"
