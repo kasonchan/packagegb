@@ -12,7 +12,7 @@ Add the following to your `project/plugins.sbt` file:
 addSbtPlugin("com.kasonchan" % "pgb" % "0.0.3")
 ```
 
-In your `build.sbt`, enable the plugin by adding the following and, 
+In your `build.sbt`, enable the plugin by adding the following, and 
 specify the Gatling version `gatlingVersion := "<version>"` that you want 
 your project to bundle with:
 
@@ -26,10 +26,11 @@ Current Gatling bundle release verion is `3.3.1`.
 
 ## SBT Commands
 
-pgb downloads and creates zipped test project with Gatling bundle verison 
-`gatlingVersion` that you specified in `build.sbt`.
-
 - Deploy your test project
+
+  - pgb downloads and creates zipped test project with Gatling bundle verison 
+  `gatlingVersion` that you specified in `build.sbt`.
+
 
 ```
 sbt> deploy
@@ -48,8 +49,8 @@ sbt> deploy
 
 - Download Gatling bundle
 
-pgb downloads current Gatling bundle. 
-You can optionally specify a Gatling bundle version to be downloaded.
+  - pgb downloads current Gatling bundle. 
+  You can optionally specify a Gatling bundle version to be downloaded.
 
 ```
 sbt> download
