@@ -2,7 +2,7 @@ val name = "pgb"
 
 lazy val buildSettings = Seq(
   organization := "com.kasonchan",
-  version := "0.0.2",
+  version := "0.0.3",
   scalaVersion := "2.12.10"
 )
 
@@ -18,14 +18,14 @@ lazy val compilerOptions = Seq(
 
 val testDependencies = Seq(
   "org.scalactic" %% "scalactic" % "3.1.1" % "it,test",
-  "org.scalatest" %% "scalatest" % "3.1.1" % "it,test",
-  "org.specs2" %% "specs2-core" % "4.8.3" % "it,test"
+  "org.scalatest" %% "scalatest" % "3.1.1" % "it,test"
 )
 
 lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 
 val baseSettings = Seq(
   sbtPlugin := true,
+  scalafmtOnCompile := true,
   libraryDependencies ++= testDependencies,
   scalacOptions in(Compile, console) := compilerOptions,
   compileScalastyle := scalastyle.in(Compile).toTask("").value,
