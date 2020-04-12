@@ -31,13 +31,11 @@ else
     if [ $? -ne 0 ]; then
       echo "[error] Invalid Gatling bundle version $GATLING_BUNDLE_VERSION"
     else
-      echo "[info] Downloaded Gatling bundle successfully"
+      echo "[info] Downloaded Gatling bundle $GATLING_BUNDLE_VERSION successfully
 
       # Unzip Gatling bundle and rename it to package name in /tmp
-      unzip /tmp/gatling-charts-highcharts-bundle-$GATLING_BUNDLE_VERSION.zip -d /tmp
-      mv -v /tmp/gatling-charts-highcharts-bundle-$GATLING_BUNDLE_VERSION /tmp/$PACKAGE_NAME
-
-      echo $?
+      unzip /tmp/gatling-charts-highcharts-bundle-"$GATLING_BUNDLE_VERSION".zip -d /tmp
+      mv -v /tmp/gatling-charts-highcharts-bundle-"$GATLING_BUNDLE_VERSION" /tmp/"$PACKAGE_NAME"
       echo "[info] Unzipped Gatling bundle successfully"
 
       rm -rfv /tmp/"$PACKAGE_NAME"/LICENSE
@@ -50,10 +48,10 @@ else
       cp -fpRv src/test/resources/* /tmp/$PACKAGE_NAME/user-files/resources
 
       # Copy resources *.conf and *.xml to Gatling bundle conf
-      cp -fpRv /tmp/$PACKAGE_NAME/user-files/resources/*.conf /tmp/$PACKAGE_NAME/conf
-      cp -fpRv /tmp/$PACKAGE_NAME/user-files/resources/*.xml /tmp/$PACKAGE_NAME/conf
-      rm -rfv /tmp/$PACKAGE_NAME/user-files/resources/*.conf
-      rm -rfv /tmp/$PACKAGE_NAME/user-files/resources/*.xml
+      cp -fpRv /tmp/"$PACKAGE_NAME"/user-files/resources/*.conf /tmp/"$PACKAGE_NAME"/conf
+      cp -fpRv /tmp/"$PACKAGE_NAME"/user-files/resources/*.xml /tmp/"$PACKAGE_NAME"/conf
+      rm -rfv /tmp/"$PACKAGE_NAME"/user-files/resources/*.conf
+      rm -rfv /tmp/"$PACKAGE_NAME"/user-files/resources/*.xml
       echo "[info] Copied your project to Gatling bundle successfully"
 
       # Zip the package

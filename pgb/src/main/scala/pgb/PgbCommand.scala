@@ -1,6 +1,5 @@
 package pgb
 
-import pgb.Pgb._
 import sbt.Command
 
 import scala.util.{Failure, Success}
@@ -18,8 +17,12 @@ object PgbCommand {
   def download: Command = Command.args("download", "<version>") {
     (state, args) =>
       val downloadResponse = args match {
-        case Seq()   => downloadGB()
-        case version => downloadGB(version.mkString(""))
+        case Seq() =>
+          state.log.info(s"Downloading Gatling bundle ${Pgb.gatlingVersion}")
+          Pgb.downloadGB()
+        case version =>
+          state.log.info(s"Downloading Gatling bundle ${version.mkString}")
+          Pgb.downloadGB(version.mkString(""))
       }
 
       downloadResponse match {
@@ -27,14 +30,17 @@ object PgbCommand {
           s match {
             case 0 =>
               state.log.info(
-                s"Downloaded Gatling bundle ${args.mkString} successfully")
+                s"Downloaded Gatling bundle successfully"
+              )
             case _ =>
               state.log.warn(
-                s"Failed downloading Gatling bundle and check log for more detail")
+                s"Failed downloading Gatling bundle and check log for more detail"
+              )
           }
         case Failure(e) =>
           state.log.error(
-            s"Failed downloading Gatling bundle and check log for more detail ${e.getMessage}")
+            s"Failed downloading Gatling bundle and check log for more detail ${e.getMessage}"
+          )
       }
 
       state

@@ -1,8 +1,8 @@
 package pgb
 
 import sbt.Keys._
+import sbt._
 import sbt.plugins.JvmPlugin
-import sbt.{AutoPlugin, Def, Keys, taskKey, _}
 
 import scala.sys.process._
 
@@ -12,29 +12,22 @@ import scala.sys.process._
   */
 object PgbPlugin extends AutoPlugin {
   object autoImport {
-    import complete.DefaultParsers.spaceDelimited
-
-    val deploy: InputKey[Int] =
-      InputKey[Int]("Produces a zipped project bundled with Gatling.")
+    val deploy: TaskKey[Int] =
+      taskKey[Int]("produces a zipped project bundled with Gatling")
+    val gatlingVersion: TaskKey[String] =
+      taskKey[String]("sets Gatling bundle version")
 
     def baseDeploySettings: Seq[Def.Setting[_]] =
-      Seq(deploy := {
-        val args: Seq[String] = spaceDelimited("<version>").parsed
-        val newBundleName = s"${name.value}-${version.value}"
-        Pgb.deployGB()
-        state.value.log.info(s"$newBundleName")
-        args match {
-          case Seq() =>
-            state.value.log.info(s"${Pgb.gatlingVersion}")
-            s"./${Pgb.scriptName} $newBundleName ${Pgb.gatlingVersion}".!
-          case Seq(version: String) =>
-            state.value.log.info(s"$version")
-            s"./${Pgb.scriptName} $newBundleName $version".!
-          case _ =>
-            state.value.log.warn("sbt> deploy <version>")
-            -1
-        }
-      })
+      Seq(
+        deploy := {
+          val newBundleName = s"${name.value}-${version.value}"
+          Pgb.deployGB()
+          state.value.log.info(s"$newBundleName")
+          state.value.log.info(s"${gatlingVersion.value}")
+          s"./${Pgb.scriptName} $newBundleName ${gatlingVersion.value}".!
+        },
+        gatlingVersion := s"${Pgb.gatlingVersion}"
+      )
   }
 
   import autoImport._
@@ -42,8 +35,8 @@ object PgbPlugin extends AutoPlugin {
   override def requires: JvmPlugin.type = sbt.plugins.JvmPlugin
   override def trigger: PluginTrigger = allRequirements
 
-  override lazy val projectSettings: Seq[Def.Setting[_]] = inConfig(Compile)(
-    baseDeploySettings) ++ Seq(
-    Keys.commands ++= Seq(PgbCommand.download)
-  )
+  override lazy val projectSettings: Seq[Def.Setting[_]] =
+    inConfig(Compile)(baseDeploySettings) ++ Seq(
+      Keys.commands ++= Seq(PgbCommand.download)
+    )
 }

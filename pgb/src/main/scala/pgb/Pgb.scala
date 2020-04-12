@@ -20,8 +20,8 @@ object Pgb {
     * @return Try(0) if process is executed successfully. Otherwise return Try(nonzero).
     */
   def downloadGB(version: String = gatlingVersion): Try[Int] = Try {
-    val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/gatling-charts-highcharts-bundle/" +
-      s"$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
+    val link = s"https://repo1.maven.org/maven2/io/gatling/highcharts/" +
+      s"gatling-charts-highcharts-bundle/$version/gatling-charts-highcharts-bundle-$version-bundle.zip"
     s"curl -f0 $link --output /tmp/gatling-charts-highcharts-bundle-$version.zip".!
   }
 
@@ -62,10 +62,8 @@ else
       echo "[info] Downloaded Gatling bundle $GATLING_BUNDLE_VERSION successfully"
 
       # Unzip Gatling bundle and rename it to package name in /tmp
-      unzip /tmp/gatling-charts-highcharts-bundle-$GATLING_BUNDLE_VERSION.zip -d /tmp
-      mv -v /tmp/gatling-charts-highcharts-bundle-$GATLING_BUNDLE_VERSION /tmp/$PACKAGE_NAME
-
-      echo $?
+      unzip /tmp/gatling-charts-highcharts-bundle-"$GATLING_BUNDLE_VERSION".zip -d /tmp
+      mv -v /tmp/gatling-charts-highcharts-bundle-"$GATLING_BUNDLE_VERSION" /tmp/"$PACKAGE_NAME"
       echo "[info] Unzipped Gatling bundle successfully"
 
       rm -rfv /tmp/"$PACKAGE_NAME"/LICENSE
@@ -78,10 +76,10 @@ else
       cp -fpRv src/test/resources/* /tmp/$PACKAGE_NAME/user-files/resources
 
       # Copy resources *.conf and *.xml to Gatling bundle conf
-      cp -fpRv /tmp/$PACKAGE_NAME/user-files/resources/*.conf /tmp/$PACKAGE_NAME/conf
-      cp -fpRv /tmp/$PACKAGE_NAME/user-files/resources/*.xml /tmp/$PACKAGE_NAME/conf
-      rm -rfv /tmp/$PACKAGE_NAME/user-files/resources/*.conf
-      rm -rfv /tmp/$PACKAGE_NAME/user-files/resources/*.xml
+      cp -fpRv /tmp/"$PACKAGE_NAME"/user-files/resources/*.conf /tmp/"$PACKAGE_NAME"/conf
+      cp -fpRv /tmp/"$PACKAGE_NAME"/user-files/resources/*.xml /tmp/"$PACKAGE_NAME"/conf
+      rm -rfv /tmp/"$PACKAGE_NAME"/user-files/resources/*.conf
+      rm -rfv /tmp/"$PACKAGE_NAME"/user-files/resources/*.xml
       echo "[info] Copied your project to Gatling bundle successfully"
 
       # Zip the package

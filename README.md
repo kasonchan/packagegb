@@ -26,11 +26,8 @@ pgb downloads and creates zipped test project with current release version Gatli
 
 - Deploy your test project
 
-You can optionally specify a version to bundle with your test project.
-
 ```
 sbt> deploy
-sbt> deploy <version>
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100 60.1M  100 60.1M    0     0  1168k      0  0:00:52  0:00:52 --:--:-- 1076k

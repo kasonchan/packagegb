@@ -25,6 +25,7 @@ lazy val compileScalastyle = taskKey[Unit]("compileScalastyle")
 
 val baseSettings = Seq(
   sbtPlugin := true,
+  scalafmtOnCompile := true,
   libraryDependencies ++= testDependencies,
   scalacOptions in(Compile, console) := compilerOptions,
   compileScalastyle := scalastyle.in(Compile).toTask("").value,
